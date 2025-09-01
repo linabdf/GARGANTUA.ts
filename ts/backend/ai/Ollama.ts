@@ -1,9 +1,7 @@
 import axios from 'axios';
 import ollama from 'ollama';
-
 import AI from "./AI";
 import {SSE_message_type, Trace} from "../../common/Settings";
-
 enum Done_reason {
     Stop = 'stop'
 }
@@ -40,6 +38,7 @@ export enum OUI_ou_NON {
 // https://github.com/ollama/ollama/blob/main/docs/api.md
 export default class Ollama extends AI {
     private static readonly _API_URL = "http://127.0.0.1:11434/api/";
+// sera replie avec les modeles  installés localement
 
     static _Available_LLMs: string;
     /** The "GARGANTUA" LLM *MUST BE CONFIGURED* within 'Ollama' having 'temperature' parameter very close to zero
@@ -55,12 +54,15 @@ export default class Ollama extends AI {
     static {
         // Vérifier que 'Ollama' est fonctionnel et quels sont les modèles disponibles (https://github.com/ollama/ollama/blob/main/docs/api.md#list-local-models)
         if (Trace)
+            //récupére la liste  des modéles instalés
             fetch(Ollama._API_URL + 'tags', {
                 method: 'GET'
                 // ...
             }).then(async response => {
-                const text = await response.text();
-                Ollama._Available_LLMs = JSON.parse(text).models.map(model => model.name).join(" - ");
+                //Récupérer  Corps  de la  reponse  JSON
+                const data = await response.json();
+                Ollama._Available_LLMs =  data.models.map((model :any)=> model.name).join(" - ");
+              //verifier si  le qwen3 est bien installé
                 if (Trace) {
                     console.log(`\x1b[32m\t✅ Réponse 'Ollama' :\x1b[0m`, Ollama._Available_LLMs);
                     console.assert(Ollama._Available_LLMs.includes(Ollama._LLM), "'Ollama._Available_LLMs.includes(Ollama._LLM)' untrue");
@@ -72,7 +74,8 @@ export default class Ollama extends AI {
             });
     }
 
-    static async Predict(fingerprint: string, CV_text: string, model = Ollama._Mistral, format = "json"): Promise<string> {
+    static async Predict(fingerprint: string, CV_text: string, model = Ollama._LLM, format = "json"): Promise<string> {
+        //prompt  consigne +le texte  du cv
         const payload = {
             format: format,
             // images: // a list of base64-encoded images for LLAVA
@@ -124,6 +127,7 @@ export default class Ollama extends AI {
         // for await (const token of response_)  // => 'stream: true'
         //     process.stdout.write(token.message.content); // Réponse standard de l'IA...
     }
+    // ca on la juste bricoler pour faire marcher le projet
     static async Elect_as_professional_competency(segment: string, model = Ollama._LLM): Promise<OUI_ou_NON> {
         const message = {
             role: 'user',

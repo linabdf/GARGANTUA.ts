@@ -8,35 +8,35 @@ export enum France_Travail_IO_type_competence {
     MACRO_SAVOIR_FAIRE = "MACRO-SAVOIR-FAIRE",
     SAVOIR = "SAVOIR"
 }
-
+// UNE COMPÉTENCE EXTRAITE DU CV
 export interface ROMEO_V2_competence {
     codeCompetence: string;
     libelleCompetence: string;
     scorePrediction: number;
     typeCompetence: France_Travail_IO_type_competence;
 }
-
+// SEGMENT DE CV + SES compétences
 export interface GARGANTUA_competency_datum { // Format for preparing transfer from server to client...
     CV_text_segment: string;
     competencies: Array<ROMEO_V2_competence>;
 }
 
 export type GARGANTUA_competency_data = Array<GARGANTUA_competency_datum>;
-
+//Métier avec score prédiction
 export interface ROMEO_V2_metier {
+
     codeAppellation: string;
     codeRome: string;
     libelleAppellation: string;
     scorePrediction: number;
 }
-
+//compétences + métiers associés
 export interface GARGANTUA_job_datum { // Format for preparing transfer from server to client...
     competencies: Array<ROMEO_V2_competence>;
     jobs: Array<ROMEO_V2_metier>;
 }
-
 export type GARGANTUA_job_data = Array<GARGANTUA_job_datum>;
-
+//token OAuth2 pour authentification
 export interface ROMEO_V2_access_token {
     access_token: string;
     expires_in: number;
@@ -60,13 +60,14 @@ interface Reponse_metier {
 }
 
 export default class ROMEO_V2 {
+
     private static readonly _API_BASE_URL = "https://api.francetravail.io/partenaire/romeo/v2";
     private static readonly _TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire";
-
-    private static readonly _Prediction_threshold_score = 0.7;
+    //seuil  minimal pour accepter une compétence  ou  un métier
+    private static readonly _Prediction_threshold_score = 0.85;
+    // nombre  des résultats a retourner par défaut
     private static readonly _Result_number = 2;
     private static readonly _Scope = "api_romeov2";
-
     // Fonction utilitaire pour introduire un délai d'au moins 1 sec.
     static Delay(milliseconds = 1500): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -77,6 +78,8 @@ export default class ROMEO_V2 {
         if (Trace)
             console.assert(process.env.ROMEO_V2_CLIENT_ID && process.env.ROMEO_V2_CLIENT_SECRET && process.env.ROMEO_V2_CLIENT_ID_2 && process.env.ROMEO_V2_CLIENT_SECRET_2,
                 "'process.env.ROMEO_V2_CLIENT_ID && process.env.ROMEO_V2_CLIENT_SECRET && process.env.ROMEO_V2_CLIENT_ID_2 && process.env.ROMEO_V2_CLIENT_SECRET_2' untrue");
+        console.log(process.env.ROMEO_V2_CLIENT_ID, process.env.ROMEO_V2_CLIENT_SECRET,process.env.ROMEO_V2_CLIENT_ID_2, process.env.ROMEO_V2_CLIENT_SECRET_2);
+
     }
 
     private static async _Get_token(): Promise<null | string> {
@@ -123,7 +126,7 @@ export default class ROMEO_V2 {
         const result = await response.json() as { access_token: string };
         return result.access_token;
     }
-
+// RETOURNE  LA LISTE  DES COMPETENCES POUR CE SEGEMENT
     private static async _Lookup_competencies(token: string, CV_text_segment: string): never | Promise<Array<GARGANTUA_competency_datum>> {
         const options = {
             data: JSON.stringify({
@@ -159,17 +162,22 @@ export default class ROMEO_V2 {
             //     data[0].competencesRome.forEach(competence =>
             //         console.log(`\x1b[33m\t\t🔍 -> "${competence.libelleCompetence}" "${competence.codeCompetence}"\x1b[0m`));
             // }
-            return new Array({CV_text_segment: CV_text_segment, competencies: data[0].competencesRome});
+
+            //console.log(data);
+            // On retourne un tableau de segments de CV avec leurs compétences associées...dans l'affichage
+            return new Array({CV_text_segment: CV_text_segment, competencies:data[0].competencesRome});
         } catch (error: unknown) {
             if (Trace)
                 console.error(`\x1b[31m\t❌ Erreur recherche compétences "${CV_text_segment}"\x1b[0m`, error);
             throw error;
         }
     }
-
+//
     static async Predict_competencies(ROME0_V2_competency_data_call_back: (data: Array<GARGANTUA_competency_datum>) => void, CV_text_segments: Array<string>): Promise<null | void> {
         try {
             const token = await ROMEO_V2._Get_token();
+
+
             if (token === null)
                 return Promise.resolve(null);
             for (const segment of CV_text_segments) {
@@ -195,7 +203,7 @@ export default class ROMEO_V2 {
             }]);
         }
     }
-
+// Predire les jobs
     static async Predict_jobs(ROME0_V2_job_data_call_back: (data: Array<GARGANTUA_job_datum>) => void, competences: Array<ROMEO_V2_competence>): Promise<null | void> {
         await ROMEO_V2.Delay(); // l'API ROMEO ver. 2 demande un délai entre 2 requêtes...
         try {

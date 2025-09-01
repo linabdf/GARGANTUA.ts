@@ -1,6 +1,8 @@
+//SSE_message_type   un objet/enum qui contient  les noms des champs json   trace pour activer et desactive les logs de debug  tarce
 import {BONJOUR, SSE_message_type, Trace} from "../../common/Settings";
-
+// classe abstraite
 export default abstract class AI {
+    // instruction pour llm qui demande d'extraire   des infos
     protected static readonly _Prompt = `Extraire du texte entre guillemets
  - des propriétés de type ${SSE_message_type.FORENAME}
  - des propriétés de type ${SSE_message_type.SURNAME}
@@ -14,8 +16,9 @@ export default abstract class AI {
 Retourner les résultats en format JSON avec ${SSE_message_type.EMPTY} pour un type de propriété demandé mais absent.`
 
     // Le format est celui de Server-sent events
+    //model nom de model  response :text repondu par llm
     protected static _Basic_response(model: string, fingerprint: string, response: string): string {
-        return `\ndata: {"${SSE_message_type.AI_LLM}": "${model}", "${SSE_message_type.AI_DIGEST}": "${response}"}\nid: ${fingerprint}\n\n`;
+        return `\ndata: {"${SSE_message_type.AI_LLM}": "${model}", "${SSE_message_type.AI_DIGEST}": "${response}"}\nid: ${fingerprint}\n\n`;'est quoi la diff entre '
     }
 
     // Le format est celui de Server-sent events
@@ -35,7 +38,7 @@ Retourner les résultats en format JSON avec ${SSE_message_type.EMPTY} pour un t
             console.log(`\x1b[32m\t✅ Réponse ${model} fine :\x1b[0m`, response);
         return `\ndata: {"${SSE_message_type.AI_LLM}": "${model}", "${SSE_message_type.AI_DIGEST}": "${response}"}\nid: ${fingerprint}\n\n`;
     }
-
+// recuperer  proprement une valuer  json  renvoyée par l'IA, meme si la cle est une peu differentes
     static Value(key: SSE_message_type, content: Object): null | string {
         let value = content[key];
         if (value)

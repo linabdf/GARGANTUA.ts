@@ -75,7 +75,7 @@ export default class Settings {
 Rappelez-vous que cette vidéo n'est pas parfaite et vous devrez adapter votre vidéo à l'employeur,\
  l'entreprise et l'industrie dans laquelle vous postulez.\
 Bonjour, je m'appelle Astrid et j'aimerais postuler pour le poste de commercial pour le groupe ABC.\
-Je viens d'obtenir un master en économie et gestion avec une spécialisation en marketing.\
+Je viens d'obtenir un m en économie et gestion avec une spécialisation en marketing.\
 Ma première expérience professionnelle a eu lieu dans le domaine bancaire\
  où j'ai participé à l'élaboration et la mise en place d'une nouvelle stratégie\
  pour améliorer la qualité de suivi des meilleurs clients.\
@@ -115,6 +115,8 @@ Mon profil vous intéresse ? Contactez-moi !";
 
     static readonly Soudure = "Bonjour, je m'appelle Henri, je suis à la recherche d'un emploi dans le domaine de la soudure et j'ai des compétences en soudage à l'arc électrique et en soudage au laser.\
 J'opère principalement dans les environs de Dax, Tarbes et Lourdes.";
+  static readonly  Geriatrie=" Bonjour, je m'appelle Franck Barbier. Mon numéro de téléphone est 0608272562.Mon adresse mail est franck.barbier.com. Je suis infirmier spécialiste en gériatrie et je recherche un emploi dans un hôpital ou une clinique autour de Mont-de-Marsan dans les Landes."
+
     static readonly Soudure_mp4 = "./video/Soudure.mp4";
     static readonly Soudure_wav = "./audio/Soudure.wav";
 

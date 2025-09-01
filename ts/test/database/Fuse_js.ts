@@ -2,11 +2,21 @@ import Fuse, {FuseResult} from 'fuse.js';
 
 import Settings from "../../common/Settings";
 
-const Provided_competencies = ["Diplôme en gestion et marketing", "Assurer le suivi de la satisfaction clients", "Contrôler la qualité des services fournis aux clients", "BTS banque, conseiller de clientèle (particuliers)"];
-const Provided_jobs = ["Responsable relations bancaires", "Chargé / Chargée de clientèle professionnelle de banque", "Chargé / Chargée de clientèle particuliers de banque", "Modèle Vivant", "Chargé / Chargée d'affaires bancaires professionnelles"];
+const Provided_competencies = ["Diplôme en gestion et marketing",
+    "Assurer le suivi de la satisfaction clients",
+     "Contrôler la qualité des services fournis aux clients",
+      "BTS banque, conseiller de clientèle (particuliers)"];
+const Provided_jobs = ["Responsable relations bancaires",
+    "Chargé / Chargée de clientèle professionnelle de banque",
+     "Chargé / Chargée de clientèle particuliers de banque",
+     "Modèle Vivant",
+      "Chargé / Chargée d'affaires bancaires professionnelles"];
 
 const Required_competencies = ["Chargé de clientèles en assurance et banque", "Conseiller clientèle en banque et assurance"];
-const Required_jobs = ["Chargé / Chargée de clientèle professionnelle de banque", "Chargé / Chargée de clientèle entreprises de banque", "Conseiller / Conseillère de clientèle bancaire", "Chargé / Chargée de clientèle particuliers de banque"];
+const Required_jobs = ["Chargé / Chargée de clientèle professionnelle de banque",
+    "Chargé / Chargée de clientèle entreprises de banque",
+    "Conseiller / Conseillère de clientèle bancaire",
+    "Chargé / Chargée de clientèle particuliers de banque"];
 
 const Required_competencies_2 = ["Gériatrie", "Gérer les urgences médicales en gériatrie"];
 const Required_jobs_2 = ["Infirmier / Infirmière en gériatrie", "Auxiliaire de gériatrie"];
