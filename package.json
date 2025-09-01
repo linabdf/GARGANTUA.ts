@@ -1,0 +1,49 @@
+{
+  "author": "xxx",
+  "description": "GARGANTUA",
+  "license": "xxx",
+  "main": "dist/client/frontend/Client.js",
+  "name": "GARGANTUA",
+  "private": true,
+  "type": "commonjs",
+  "version": "1.0.0",
+  "scripts": {
+    "TEST_AI": "tsx ./ts/test/ai/AI.ts",
+    "TEST_AI21": "tsx --env-file=.env ./ts/test/ai/AI21.ts",
+    "TEST_AssemblyAI": "tsx --env-file=.env ./ts/test/text_extraction/AssemblyAI.ts",
+    "TEST_Fuse_js": "tsx ./ts/test/database/Fuse_js.ts",
+    "TEST_Ollama": "tsx ./ts/test/ai/Ollama.ts",
+    "TEST_OpenAI": "tsx --env-file=.env ./ts/test/ai/OpenAI.ts",
+    "TEST_OpenAI_text_extraction": "tsx --env-file=.env ./ts/test/text_extraction/OpenAI.ts",
+    "TEST_ROME_V4": "tsx --env-file=.env ./ts/test/francetravail.io/ROME_V4.ts",
+    "TEST_ROMEO_V2": "tsx --env-file=.env ./ts/test/francetravail.io/ROMEO_V2.ts",
+    "TEST_Text_extraction": "tsx --env-file=.env ./ts/test/text_extraction/Text_extraction.ts",
+    "TEST_WHISPER": "tsx --env-file=.env ./ts/test/text_extraction/Whisper.ts"
+  },
+  "dependencies": {
+    "assemblyai": "^4.15.0",
+    "axios": "^1.11.0",
+    "compromise": "^14.14.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "form-data": "^4.0.4",
+    "fuse.js": "^7.1.0",
+    "multer": "^2.0.2",
+    "mysql2": "^3.14.3",
+    "nexline": "^1.2.2",
+    "nodejs-whisper": "^0.2.9",
+    "ollama": "^0.5.17",
+    "openai": "^4.104.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/fluent-ffmpeg": "^2.1.27",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^22.17.2",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  }
+}

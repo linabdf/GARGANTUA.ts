@@ -1,0 +1,22 @@
+{
+  // Shared by sub-projects:
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "target": "ES2022" // Ok pour Node.js ver. 18 (https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping#node-18)
+//    "typeRoots": [
+//      "./node_modules/@types" // Inutile a priori car "./node_modules/@types" est le rép. par défaut...
+//    ]
+  },
+  "files": [],
+  // To stop accidental compilation without '--build' -> everything is compiled in the root directory...
+  "references": [
+    // https://stackoverflow.com/questions/64626846/typescript-tsc-not-picking-up-tsconfig-json-inside-a-subdirectory
+    // https://dev.to/jameswallis/using-typescript-project-references-to-share-common-code-p8o
+    {
+      "path": "./ts/backend"
+    },
+    {
+      "path": "./ts/frontend"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{ // backend
+  "extends": "../../tsconfig.json", // '"target": "ES2022"' dans fichier de config. chapeau...
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true, // Allow 'import x from ...' even if no default export defined...
+    "esModuleInterop": true,
+    "lib": ["ES2022"], // Ok pour Node.js ver. 18 (https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping#node-18)
+    "module": "esnext", // Pour 'tsx'
+    "moduleResolution": "node", // Pour 'tsx'
+    "rootDir": ".." // ".." pour récuperer des fichiers source en dehors du rép. 'frontend'
+  },
+  "engines": {
+    "node": "<=18" // https://www.marcusoft.net/2015/03/packagejson-and-engines-and-enginestrict.html
+  },
+  "include": [] // Not needed by 'tsx'...
+}
