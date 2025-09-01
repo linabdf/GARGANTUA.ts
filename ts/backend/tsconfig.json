@@ -1,0 +1,25 @@
+{ // backend // // Config. for Node.js ver. 18: https://stackoverflow.com/questions/72380007/what-typescript-configuration-produces-output-closest-to-node-js-18-capabilities
+  "extends": "../../tsconfig.json", // '"target": "ES2022"' dans fichier de config. chapeau...
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true, // Allow 'import x from ...' even if no default export defined...
+    "esModuleInterop": true,
+    "experimentalDecorators": true, // Décorateurs 'TypeORM'...
+    "lib": ["ES2022"], // Ok pour Node.js ver. 18 (https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping#node-18)
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "../../dist/server",
+    "rootDir": ".." // ".." pour récuperer des fichiers source en dehors du rép. 'frontend'
+  },
+  "engine-strict": true, // npm will refuse to install any package not be compatible with the current Node.js version
+  "engines": {
+    "node": "<=18" // https://www.marcusoft.net/2015/03/packagejson-and-engines-and-enginestrict.html
+  },
+  "include": [
+    "./ai/*.ts",
+    "./audio_extraction/*.ts",
+    "./francetravail.io/*.ts",
+    "./text_extraction/*.ts",
+    "../test/database/*.ts"
+  ]
+}

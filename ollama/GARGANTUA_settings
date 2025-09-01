@@ -1,0 +1,12 @@
+# Fichier utilisé pour la création d'un modèle avec des paramètres personnalisés
+# ollama pull qwen3:latest
+FROM qwen3:latest
+# https://github.com/ollama/ollama/blob/main/docs/modelfile.md#parameter
+# 'num_predict' tells the LLM the maximum number of tokens it is allowed to generate (default: -1, infinite generation)
+# Si on fixe une valeur faible pour 'num_predict' alors on rate la réponse du LLM...
+# PARAMETER num_predict 10
+# 'temperature' to 1 [higher is more creative, lower is more coherent]
+PARAMETER temperature 0.0
+# Ne pas omettre 'boolean' pour 'mistral'
+# Attention, ce réglage n'est actuellement pas géré par le code qui teste sur "OUI" ou "NON"...
+# SYSTEM "Respond with only one boolean character: 1 for a positive response and 0 for a negative response"
