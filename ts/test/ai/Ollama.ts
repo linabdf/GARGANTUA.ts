@@ -17,8 +17,8 @@ Ollama.Elect_as_professional_competency(Geriatrie_1).then(oui_ou_non => {     co
      console.assert(oui_ou_non === OUI_ou_NON.OUI, "'oui_ou_non === OUI_ou_NON.OUI' untrue");
  });
  /*
-Ollama.Predict(Settings.FINGERPRINT, Settings.Banque_commercial_suivi_client);
- /*Ollama.Predict(Settings.FINGERPRINT, Settings.Marketing_digital);
+Ollama.Predict(Settings.FINGERPRINT, Settings.Banque_commercial_suivi_client);*/
+ Ollama.Predict(Settings.FINGERPRINT, Settings.Marketing_digital);
  /*Ollama.Predict(Settings.FINGERPRINT, Settings.Soudure);
 /
 // ATTENDU: "NON" "NON" "OUI" "OUI"
