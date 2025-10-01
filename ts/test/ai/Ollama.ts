@@ -1,4 +1,4 @@
-import Settings from "../../common/Settings";
+import Settings, {SSE_message_type} from "../../common/Settings";
 import Ollama, {OUI_ou_NON} from "../../backend/ai/Ollama";
 import {Segment_CV_text,Segment_CV_string} from '../../backend/Server_settings'
 // L'API ROMEO ver. 2 retourne '✅ Compétence : "Barman" 0.745' et '✅ Compétence : "BP barman" 0.724' sur la base de la phrase 'Geriatrie_1'.
@@ -58,8 +58,8 @@ testMarketingDigital()
 const cv_text ="Voyons ici un exemple d'une vidéo de candidat effective.\
                 Rappelez-vous que cette vidéo n'est pas parfaite et vous devrez adapter votre vidéo à l'employeur,\
                  l'entreprise et l'industrie dans laquelle vous postulez.\
-                Bonjour, je m'appelle Astrid et j'aimerais postuler pour le poste de commercial pour le groupe ABC.\
-                Je viens d'obtenir un m en économie et gestion avec une spécialisation en marketing.\
+                Bonjour, je m'appelle Astrid j'aimerais postuler pour le poste de commercial pour le groupe ABC.\
+                Je viens d'obtenir un master en économie et gestion avec une spécialisation en marketing.\
                 Ma première expérience professionnelle a eu lieu dans le domaine bancaire\
                  où j'ai participé à l'élaboration et la mise en place d'une nouvelle stratégie\
                  pour améliorer la qualité de suivi des meilleurs clients.\
@@ -79,13 +79,36 @@ const segments = Segment_CV_string(cv_text);
 console.log(segments);
 
 async function testOllama() {
-
-
-
-  for (const seg of segments) {
-    const oui_ou_non = await Ollama.Elect_as_professional_competency(seg);
-    console.info(`\x1b[32m\t✅ ${oui_ou_non} -> "${seg}"\x1b[0m`);
-
-}
+    const segmentsAvecCompetences:string[]=[];
+    for (const seg of segments) {
+        const oui_ou_non = await Ollama.Elect_as_professional_competency(seg);
+        console.info(`\x1b[32m\t✅ ${oui_ou_non} -> "${seg}"\x1b[0m`);
+        console.log(`${oui_ou_non}-> "${seg}"`);
+        if(oui_ou_non==="OUI"){
+            segmentsAvecCompetences.push(seg.trim());
+        }
+    }
+    console.log(`\nSegments identifiés comme compétences professionnelles:`);
+    console.log(segmentsAvecCompetences);
+    return segmentsAvecCompetences;
 }
 testOllama();
+
+/*async function predictmet(){
+    const cv_text = "Bonjour, je m'appelle Astrid et j'aimerais postuler pour le poste de commercial.";
+    let result;
+    console.log("Contenu envoyé :", cv_text);
+    result = await Ollama.Predict( SSE_message_type.JOB, cv_text);
+    console.log(result);
+}
+predictmet();
+*/
+/*async function testPredict(){
+    const fingerprint=Settings.fingerprint;
+    const model=Ollama._LLM;
+    const format="json";
+
+    const result=await Ollama.Predict(fingerprint,segments,model,format);
+    console.log(`\n Résultat complet de Predict :\n`,result);
+    }
+testPredict();*/

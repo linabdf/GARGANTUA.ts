@@ -43,7 +43,7 @@
     "@types/fluent-ffmpeg": "^2.1.27",
     "@types/multer": "^2.0.0",
     "@types/node": "^22.17.2",
-    "tsx": "^4.20.4",
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   }
 }

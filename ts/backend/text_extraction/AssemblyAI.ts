@@ -177,7 +177,7 @@ export default class AssembyAI {
     };
 
     // Fonction récupérant le statut du transcript de l'audio chez AssemblyAI...
-    private static _Get_audio_transcript_status = async (transcript_id: string): Promise<AssembyAI_transcript_response> => {
+    private static _Get_audio_transcript_status = async (transcript_id: string): Promise<T> => {
         const response = await axios.get<AssembyAI_transcript_response>(`$AssembyAI_transcript_url/${transcript_id}`,
             {headers: {Authorization: process.env.AssembyAI_authorization_1}}
         );

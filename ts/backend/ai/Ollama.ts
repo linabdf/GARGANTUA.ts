@@ -43,7 +43,7 @@ export default class Ollama extends AI {
     static _Available_LLMs: string;
     /** The "GARGANTUA" LLM *MUST BE CONFIGURED* within 'Ollama' having 'temperature' parameter very close to zero
      so that answers are precise and the same from one request to another... */
-    static readonly _LLM = "qwen3";
+    static readonly _LLM = "llama3.2";
 
     private static readonly _Deepseek_r1 = "deepseek-r1";
     private static readonly _Llama3_3 = "llama3.3";
@@ -129,10 +129,24 @@ export default class Ollama extends AI {
     }
     // ca on la juste bricoler pour faire marcher le projet
     static async Elect_as_professional_competency(segment: string, model = Ollama._LLM): Promise<OUI_ou_NON> {
-        const message = {
-            role: 'user',
-            content: `Ce texte entre guillemets « ${segment} » fait-il référence à une compétence professionnelle ? Répondre ${OUI_ou_NON.OUI} ou ${OUI_ou_NON.NON} sans explication.`
-        };
+       const keywords= ["compétence","expérience","compétences","qualification","qualifications","savoir-faire","expertise","aptitude","aptitudes","capacité","capacités","skill","skills","poste","postuler"];
+       const ouioui=keywords.some(word => segment.toLowerCase().includes(word));
+       if(ouioui){
+        if (Trace){   console.log(`\x1b[43m\n\n\t✅ OUI -> Le segment de CV fait-il référence à une compétence pro. `);
+            return OUI_ou_NON.OUI;
+        }}
+       /*let reponseLLM=""
+     */   const message = {
+           role: 'user',
+            content: `Tu es un assistant qui analyse des segments de CV.
+            Ton objectif : décider si un segment fait référence à une compétence professionnelle.
+            Fais particulièrement attention aux éléments suivants : poste occupé, responsabilités, expérience, gestion de projet, tâches, leadership, compétences techniques ou relationnelles.
+            Répond seulement OUI ou NON, sans explication.
+            Segment : « ${segment} »`
+       };
+   /*    const response=await ollama.complete({model,message:[message],max_tokens:50});
+       r
+*/
         return new Promise(async (oui_ou_non) => {
             // Enable or disable thinking: https://ollama.com/blog/thinking
             const response = await ollama.chat({model: `${model}`, messages: [message], think: false, stream: false});

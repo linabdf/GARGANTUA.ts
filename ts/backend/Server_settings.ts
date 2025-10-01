@@ -4,6 +4,7 @@ import compromise from 'compromise';
 
 import dotenv from 'dotenv'; // Utile uniquement pour Node.js 18 car option '--env-file=.env' absente...
 import nexline from 'nexline';
+import nlp from 'compromise'
 
 
 // import path from 'node:path'; // 'tsx'
@@ -21,7 +22,7 @@ class Server_settings {
         dotenv.config(); // Utile uniquement pour Node.js 18 car option '--env-file=.env' absente...
     }
 }
-//fonction qui fait le decoupage
+/*//fonction qui fait le decoupage
 export async function Segment_CV_text(text_file_path: string): never | Promise<Array<string>> {
     const segments = new Array;
     // Exception à gérer : lire le txte ligne par ligne
@@ -33,12 +34,12 @@ export async function Segment_CV_text(text_file_path: string): never | Promise<A
         if (segment === null) break; // End of text is reached...
         if (segment.length === 0) continue; // Ignore empty line...
         // https://observablehq.com/@spencermountain/compromise-selections
-        segments.push(...compromise(segment.trim()).clauses().out('array'));
+        segments.push(...compromise(segment.trim()).sentences().out('array'));
     }
     // if (Trace)
     //     console.log(`\x1b[33m\t\t>> ${segments.join(" *** ")}\x1b[0m`);
     return segments;
-}
+}*/
 //fonction qui decoupe un paragraphe je vais la remplacer apres parla fonction segeents cv qui prend  un fichier
 export function Segment_CV_string(text: string): Array<string> {
     // Découpe le texte en lignes (ou en paragraphes)
@@ -48,8 +49,20 @@ export function Segment_CV_string(text: string): Array<string> {
     for (const line of lines) {
         if (line.trim().length === 0) continue; // ignorer les lignes vides
         // Découpe chaque ligne en clauses avec compromise
-        segments.push(...compromise(line.trim()).clauses().out('array'));
-    }
+        //  segments.push(...compromise(line.trim()).clauses().out('array'));
+        const clauses = nlp(line.trim()).clauses().out('array');
+        for (const clause of clauses) {
+            const trimmedClause = clause.split(/\s*(?:,|\bet\b|\bmais\b|\bou\b)\s*/i)
+                .map(t => t.trim())
+                .filter(t => t.length > 0);
+            for (let i = 0; i < trimmedClause.length; i++) {
+                const seg = trimmedClause[i];
+                if (i === trimmedClause.length - 1 && seg.split(/\s+/).length === 1 && segments.length > 0) {
+                    segments[segments.length - 1] += " " + seg;
+                } else segments.push(seg);
 
+            }
+        }
+    }
     return segments;
 }
