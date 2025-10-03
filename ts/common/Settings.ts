@@ -115,7 +115,7 @@ Mon profil vous intéresse ? Contactez-moi !";
 
     static readonly Soudure = "Bonjour, je m'appelle Henri, je suis à la recherche d'un emploi dans le domaine de la soudure et j'ai des compétences en soudage à l'arc électrique et en soudage au laser.\
 J'opère principalement dans les environs de Dax, Tarbes et Lourdes.";
-  static readonly  Geriatrie=" Bonjour, je m'appelle Franck Barbier. Mon numéro de téléphone est 0608272562.Mon adresse mail est franck.barbier.com. Je suis infirmier spécialiste en gériatrie et je recherche un emploi dans un hôpital ou une clinique autour de Mont-de-Marsan dans les Landes."
+  static readonly  Geriatrie="Bonjour, je m'appelle Franck Barbier. Mon numéro de téléphone est 0608272562.Mon adresse mail est franck.barbier.com. Je suis infirmier spécialiste en gériatrie et je recherche un emploi dans un hôpital ou une clinique autour de Mont-de-Marsan dans les Landes."
 
     static readonly Soudure_mp4 = "./video/Soudure.mp4";
     static readonly Soudure_wav = "./audio/Soudure.wav";

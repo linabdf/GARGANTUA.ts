@@ -50,11 +50,21 @@ export function Segment_CV_string(text: string): Array<string> {
         if (line.trim().length === 0) continue; // ignorer les lignes vides
         // Découpe chaque ligne en clauses avec compromise
         //  segments.push(...compromise(line.trim()).clauses().out('array'));
-        const clauses = nlp(line.trim()).clauses().out('array');
+        const clauses = nlp(line.trim()).sentences().out('array');
         for (const clause of clauses) {
+
             const trimmedClause = clause.split(/\s*(?:,|\bet\b|\bmais\b|\bou\b)\s*/i)
                 .map(t => t.trim())
-                .filter(t => t.length > 0);
+                .filter(t => t.length > 4);
+                if(trimmedClause.length === 3) {
+                    const partieGauche=trimmedClause[0].split(/\s+/).length;
+                    const partieDroite=trimmedClause[2].split(/\s+/).length;
+                    if(partieGauche<3 || partieDroite<3){
+                        segments.push(trimmedClause);
+                        continue;
+                    }
+                }
+
             for (let i = 0; i < trimmedClause.length; i++) {
                 const seg = trimmedClause[i];
                 if (i === trimmedClause.length - 1 && seg.split(/\s+/).length === 1 && segments.length > 0) {

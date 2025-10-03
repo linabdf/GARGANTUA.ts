@@ -2,6 +2,9 @@ import axios from 'axios';
 import ollama from 'ollama';
 import AI from "./AI";
 import {SSE_message_type, Trace} from "../../common/Settings";
+import {resolve} from "node:dns";
+import {SentimentAnalysisResult} from "assemblyai";
+import {string} from "zod";
 enum Done_reason {
     Stop = 'stop'
 }
@@ -25,7 +28,8 @@ export enum OUI_ou_NON {
     OUI = "OUI",
     NON = "NON"
 }
-
+type LLMResponse=OUI_ou_NON |
+    `Nom :${string}` |`Age :${string}` | `Adresse :${string}`;
 /** Windows */
 // $BODY = @{
 //     model = 'mistral:latest'
@@ -127,8 +131,14 @@ export default class Ollama extends AI {
         // for await (const token of response_)  // => 'stream: true'
         //     process.stdout.write(token.message.content); // Réponse standard de l'IA...
     }
+    static async enleverIdentite(segment: string): string {
+        // Détecte le début de phrase d'identité
+        const reg = /\b(je m'appelle|moi c'est|je suis|mon nom est|prénom|nom de famille|nom)\s+[A-ZÀ-ÖÙ-Ý]+/i;
+        return segment.replace(reg, '').trim();
+    }
+
     // ca on la juste bricoler pour faire marcher le projet
-    static async Elect_as_professional_competency(segment: string, model = Ollama._LLM): Promise<OUI_ou_NON> {
+    static async Elect_as_professional_competency(segment: string, model = Ollama._LLM): Promise<LLMResponse> {
        const keywords= ["compétence","expérience","compétences","qualification","qualifications","savoir-faire","expertise","aptitude","aptitudes","capacité","capacités","skill","skills","poste","postuler"];
        const ouioui=keywords.some(word => segment.toLowerCase().includes(word));
        if(ouioui){
@@ -141,21 +151,35 @@ export default class Ollama extends AI {
             content: `Tu es un assistant qui analyse des segments de CV.
             Ton objectif : décider si un segment fait référence à une compétence professionnelle.
             Fais particulièrement attention aux éléments suivants : poste occupé, responsabilités, expérience, gestion de projet, tâches, leadership, compétences techniques ou relationnelles.
-            Répond seulement OUI ou NON, sans explication.
+            Régles spéciales:
+            -Si le texte contient  une identité(exemple: "Je m'appelle Jean Dupont"), réponds Nom :suivi de nom détecté.
+            -Si le texte mentionne  une salutation(exemple: "Bonjour, je m'appelle Jean Dupont"), réponds Non .
+            -Si le texte  montionne  l'age (exemple:"J'ai 30 ans"),reponds Age :suivi de l'age détecté.
+            -Si le texte  montionne  une adresse (exemple:"J'habite à Paris"),réponds Adresse :suivi de l'adresse détectée.
+            -sinon réponds seulement OUI  et précise la compétence  ou NON sans explication.
             Segment : « ${segment} »`
        };
    /*    const response=await ollama.complete({model,message:[message],max_tokens:50});
        r
 */
-        return new Promise(async (oui_ou_non) => {
+        // vu qu'on est dans une promesse on peut faire un return
+        return new Promise(async (resolve) => {
             // Enable or disable thinking: https://ollama.com/blog/thinking
             const response = await ollama.chat({model: `${model}`, messages: [message], think: false, stream: false});
-            const oui = response.message.content.toUpperCase().split(OUI_ou_NON.OUI).length - 1;
-            const non = response.message.content.toUpperCase().split(OUI_ou_NON.NON).length - 1;
+            const reponseLLM=response.message.content;
+                if(reponseLLM.toUpperCase().startsWith("NOM")||reponseLLM.toUpperCase().startsWith("AGE")||reponseLLM.toUpperCase().startsWith("ADRESSE")){
+                 resolve(reponseLLM as LLMResponse)
+                    return;}
+            const oui = reponseLLM.toUpperCase().split(OUI_ou_NON.OUI).length - 1;
+            const non =reponseLLM.toUpperCase().split(OUI_ou_NON.NON).length - 1;
             if (Trace)
                 console.log(`\x1b[43m\n\n\t✅ Le segment de CV fait-il référence à une compétence pro. ? ${response.message.content} ("OUI" : ${oui} - "NON" : ${non})\x1b[0m`);
             // Résiduellement on répond "OUI" de manière à envoyer le segment de texte du CV à ROMEO ver. 2...
-            oui_ou_non(oui > non ? OUI_ou_NON.OUI : non > oui ? OUI_ou_NON.NON : OUI_ou_NON.OUI);
+            resolve(oui > non ?
+                OUI_ou_NON.OUI
+                : non > oui ?
+                    OUI_ou_NON.NON :
+                    OUI_ou_NON.OUI);
         });
         // const response_ = await ollama.chat({model: `${model}`, messages: [message], stream: true});
         // for await (const token of response_)  // => 'stream: true'
