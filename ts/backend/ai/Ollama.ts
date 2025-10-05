@@ -131,11 +131,6 @@ export default class Ollama extends AI {
         // for await (const token of response_)  // => 'stream: true'
         //     process.stdout.write(token.message.content); // Réponse standard de l'IA...
     }
-    static async enleverIdentite(segment: string): string {
-        // Détecte le début de phrase d'identité
-        const reg = /\b(je m'appelle|moi c'est|je suis|mon nom est|prénom|nom de famille|nom)\s+[A-ZÀ-ÖÙ-Ý]+/i;
-        return segment.replace(reg, '').trim();
-    }
 
     // ca on la juste bricoler pour faire marcher le projet
     static async Elect_as_professional_competency(segment: string, model = Ollama._LLM): Promise<LLMResponse> {

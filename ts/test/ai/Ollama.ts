@@ -76,11 +76,32 @@ Je vous remercie de l'attention que vous porterez à ma candidature\
  et espère vous rencontrer bientôt.";
 const segments = Segment_CV_string(cv_text);
 console.log(segments);
+function isPersonalInfo(segment: string): string {
+    const donneesPersos = [
+        /Bonjour, je m'appelle\s+[A-ZÉÈÊÀÂÎÔÛ][a-zàâéèêîïôöùûüç-]+(?:\s+[A-Z][a-zàâéèêîïôöùûüç-]+)*/i, // prénom + nom
+        /\bje suis\b/i,
+        /\bj'ai \d{1,2} ans\b/i,          // âge
+        /\b\d{10}\b/,                     // téléphone 10 chiffres
+        /\b\d{2} \d{2} \d{2} \d{2} \d{2}\b/, // téléphone français
+        /email/i                          // email
+    ];
+    let cleaned=segment;
+    for(const s of donneesPersos){
+        cleaned=cleaned.replace(s,'').trim();
+    }
+    cleaned=cleaned.replace(/^(,|et|ou|)\s+/i, '');
 
+
+    return  cleaned
+}
+const filtrerSegments=segments.map(seg=>isPersonalInfo(seg));
+console.log("Segments avant filtrage des informations personnelles :");
+console.log(filtrerSegments);
+console.log("Segments apres filtrage des informations personnelles :");
 async function testOllama() {
     const segmentsAvecIdentites:string []=[];
     const segmentsAvecCompetences:string[]=[];
-    for (const seg of segments) {
+    for (const seg of filtrerSegments) {
         const segLower = seg.toLowerCase();
         const oui_ou_non = await Ollama.Elect_as_professional_competency(seg);
         console.info(`\x1b[32m\t✅ ${oui_ou_non} -> "${seg}"\x1b[0m`);
@@ -94,6 +115,8 @@ async function testOllama() {
     return segmentsAvecCompetences;
 }
 testOllama();
+
+
 
 /*async function predictmet(){
     const cv_text = "Bonjour, je m'appelle Astrid et j'aimerais postuler pour le poste de commercial.";

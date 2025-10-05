@@ -5,6 +5,7 @@ import compromise from 'compromise';
 import dotenv from 'dotenv'; // Utile uniquement pour Node.js 18 car option '--env-file=.env' absente...
 import nexline from 'nexline';
 import nlp from 'compromise'
+import {regex} from "zod/v4";
 
 
 // import path from 'node:path'; // 'tsx'
@@ -40,39 +41,15 @@ export async function Segment_CV_text(text_file_path: string): never | Promise<A
     //     console.log(`\x1b[33m\t\t>> ${segments.join(" *** ")}\x1b[0m`);
     return segments;
 }*/
-//fonction qui decoupe un paragraphe je vais la remplacer apres parla fonction segeents cv qui prend  un fichier
+
 export function Segment_CV_string(text: string): Array<string> {
-    // Découpe le texte en lignes (ou en paragraphes)
-    const lines = text.split(/\n+/);
-    const segments: string[] = [];
+   if (!text || text.trim().length === 0) return [];
+        // Normaliser : ajouter un espace après les points si oublié
+        const normalized = text.replace(/([a-zA-Z])\.([A-Z])/g, "$1. $2");
 
-    for (const line of lines) {
-        if (line.trim().length === 0) continue; // ignorer les lignes vides
-        // Découpe chaque ligne en clauses avec compromise
-        //  segments.push(...compromise(line.trim()).clauses().out('array'));
-        const clauses = nlp(line.trim()).sentences().out('array');
-        for (const clause of clauses) {
+        // Utiliser compromise pour extraire les phrases
+        const sentences = nlp(normalized).sentences().out('array');
 
-            const trimmedClause = clause.split(/\s*(?:,|\bet\b|\bmais\b|\bou\b)\s*/i)
-                .map(t => t.trim())
-                .filter(t => t.length > 4);
-                if(trimmedClause.length === 3) {
-                    const partieGauche=trimmedClause[0].split(/\s+/).length;
-                    const partieDroite=trimmedClause[2].split(/\s+/).length;
-                    if(partieGauche<3 || partieDroite<3){
-                        segments.push(trimmedClause);
-                        continue;
-                    }
-                }
-
-            for (let i = 0; i < trimmedClause.length; i++) {
-                const seg = trimmedClause[i];
-                if (i === trimmedClause.length - 1 && seg.split(/\s+/).length === 1 && segments.length > 0) {
-                    segments[segments.length - 1] += " " + seg;
-                } else segments.push(seg);
-
-            }
-        }
+        // Nettoyer les phrases
+        return sentences.map(s => s.trim()).filter(s => s.length > 0);
     }
-    return segments;
-}
