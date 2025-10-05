@@ -9,7 +9,7 @@ function ROME0_V2_call_back(this: string, data: Array<GARGANTUA_competency_datum
     console.info(JSON.stringify(data));
 }
 
-const competencies = ROMEO_V2.Predict_competencies(ROME0_V2_call_back.bind(Settings.FINGERPRINT), ["Je viens  d'obtenir un master en économie et gestion avec une spécialisation en marketing."]);
+const competencies = ROMEO_V2.Predict_competencies(ROME0_V2_call_back.bind(Settings.FINGERPRINT), ["Je viens  d'obtenir un master en informatique","i m here in Paris"]);
 competencies.then((competencies) => {
     if (competencies === null)
         console.log(`\x1b[31m\t\t❌ Si 'null' alors problème avec 'token'\x1b[0m`);

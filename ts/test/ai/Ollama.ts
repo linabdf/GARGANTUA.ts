@@ -1,6 +1,7 @@
 import Settings, {SSE_message_type} from "../../common/Settings";
 import Ollama, {OUI_ou_NON} from "../../backend/ai/Ollama";
 import {Segment_CV_string} from '../../backend/Server_settings'
+import ROMEO_V2, {GARGANTUA_competency_datum} from "../../backend/francetravail.io/ROMEO_V2";
 // L'API ROMEO ver. 2 retourne '✅ Compétence : "Barman" 0.745' et '✅ Compétence : "BP barman" 0.724' sur la base de la phrase 'Geriatrie_1'.
 // L'idée est de ne pas envoyer cette phrase à l'API grâce au LLM qui va nous dire que la phrase
 // ne fait *AUCUNEMENT* référence à des compétences professionnelles...
@@ -54,32 +55,14 @@ const sentences = Settings.Soudure
 }
 testMarketingDigital()
 */
-const cv_text ="Voyons ici un exemple d'une vidéo de candidat effective.\
-Rappelez-vous que cette vidéo n'est pas parfaite et vous devrez adapter votre vidéo à l'employeur,\
- l'entreprise et l'industrie dans laquelle vous postulez.\
-Bonjour, je m'appelle Astrid et j'aimerais postuler pour le poste de commercial pour le groupe ABC.\
-Je viens d'obtenir un m en économie et gestion avec une spécialisation en marketing.\
-Ma première expérience professionnelle a eu lieu dans le domaine bancaire\
- où j'ai participé à l'élaboration et la mise en place d'une nouvelle stratégie\
- pour améliorer la qualité de suivi des meilleurs clients.\
-Ce qui m'interpelle le plus dans le poste que vous proposez\
- est qu'il me permettrait de mettre à profit mes compétences et mon expérience\
- dans un domaine qui me plaît et dans lequel je me projette sur le long terme.\
-De plus, la qualité de l'écoute client et la détermination du groupe ABC\
- à privilégier l'évolution de ses collaborateurs me séduit tout particulièrement.\
- Mon expérience unique dans le domaine bancaire, mon orientation client\
- et ma parfaite maîtrise Excel font de moi une candidate idéale\
- pour le poste que vous proposez.\
-Pour finir, j'aimerais mettre mon enthousiasme, mon énergie\
- et mon goût pour réussir de nouveaux challenges au profit d'un travail d'équipe.\
-Je vous remercie de l'attention que vous porterez à ma candidature\
- et espère vous rencontrer bientôt.";
+const cv_text =" Je viens  d'obtenir un master en informatique ";
 const segments = Segment_CV_string(cv_text);
 console.log(segments);
 function isPersonalInfo(segment: string): string {
     const donneesPersos = [
         /Bonjour, je m'appelle\s+[A-ZÉÈÊÀÂÎÔÛ][a-zàâéèêîïôöùûüç-]+(?:\s+[A-Z][a-zàâéèêîïôöùûüç-]+)*/i, // prénom + nom
-        /\bje suis\b/i,
+      // /\bje suis\b/i,
+        /moi c'est\b/i,
         /\bj'ai \d{1,2} ans\b/i,          // âge
         /\b\d{10}\b/,                     // téléphone 10 chiffres
         /\b\d{2} \d{2} \d{2} \d{2} \d{2}\b/, // téléphone français
@@ -98,20 +81,38 @@ const filtrerSegments=segments.map(seg=>isPersonalInfo(seg));
 console.log("Segments avant filtrage des informations personnelles :");
 console.log(filtrerSegments);
 console.log("Segments apres filtrage des informations personnelles :");
+function ROME0_V2_call_back(this: string, data: Array<GARGANTUA_competency_datum>) {
+    // L'appel est fait avec 'bind' ayant pour premier paramètre 'fingerprint'
+    // Attention, 'this.constructor.name === "String"'. On teste donc sur '==' et non '===' :
+    console.assert(Settings.FINGERPRINT == this, "'Settings.FINGERPRINT == this' untrue");
+    console.info(JSON.stringify(data));
+}
+function sleep(ms:number){
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 async function testOllama() {
     const segmentsAvecIdentites:string []=[];
     const segmentsAvecCompetences:string[]=[];
     for (const seg of filtrerSegments) {
         const segLower = seg.toLowerCase();
         const oui_ou_non = await Ollama.Elect_as_professional_competency(seg);
-        console.info(`\x1b[32m\t✅ ${oui_ou_non} -> "${seg}"\x1b[0m`);
+      //  console.info(`\x1b[32m\t✅ ${oui_ou_non} -> "${seg}"\x1b[0m`);
         console.log(`${oui_ou_non}-> "${seg}"`);
-        if(oui_ou_non==="OUI"){
+
             segmentsAvecCompetences.push(seg.trim());
-        }
+
     }
     console.log(`\nSegments identifiés comme compétences professionnelles:`);
     console.log(segmentsAvecCompetences);
+    for(const seg of segmentsAvecCompetences){
+    if(segmentsAvecCompetences.length>0){
+        const competencies = ROMEO_V2.Predict_competencies(ROME0_V2_call_back.bind(Settings.FINGERPRINT), [seg]);
+        competencies.then((competencies) => {
+            if (competencies === null)
+                console.log(`\x1b[31m\t\t❌ Si 'null' alors problème avec 'token'\x1b[0m`);
+        });
+        await sleep(500);
+    }}
     return segmentsAvecCompetences;
 }
 testOllama();
