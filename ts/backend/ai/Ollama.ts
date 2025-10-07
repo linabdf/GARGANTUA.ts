@@ -143,22 +143,25 @@ export default class Ollama extends AI {
             content: `
             Tu es un assistant qui analyse des segments de CV.
             Ton objectif est  déterminer si un segment contient des informations professionnelles pertinentes comme:
-               -des compétences (techniques, linguistiques, informatiques, relationnelles),
-               - des savoir-faire ou hard skills,
-                - des mentions de poste, de métier ou de candidature (par exemple : "je postule pour...", "je souhaite occuper le poste de...", etc.),
-               - des formations, diplômes ou certifications.
+               - une compétence (techniques, linguistiques, informatiques, relationnelles)
+               - un savoir-faire ou hard skills
+               - une  mention explicite d'emploi, de poste, de métier ou de candidature (par exemple : "je postule pour...", "je souhaite occuper le poste de...","je suis développeur" etc.)
+               - une formation,  un diplômes ou une certification
            Règles strictes :
            1. Si le segment contient :
-              - une compétence technique , un savoir-faire, un hard skill,
-              - la personne parle d'un poste ou d'un emploi,
+              - une compétence technique , un savoir-faire, un hard skill
+              - la personne parle d'un poste ou d'un emploi par exemple : "j'aimerais postuler pour", "je souhaite occuper le poste de...", "je suis développeur ..."
               - une formation ou un diplôme
            renvoie uniquement OUI
            2. Sinon , renvoie  uniquement NON
            3. Ne renvoie rien d’autre que OUI ou NON
            4. Chaque segment est traité individuellement.
            Exemples:
-              -"Je suis maistrise en Java et Python." -> OUI
-              - J'aimerais postuler pour le poste de commercial => OUI
+             -"Je maîtrise Java et Python." → OUI  
+             - "Je viens d'obtenir un master en économie et gestion." → OUI  
+             - "J'aimerais postuler pour le poste de commercial." → OUI  
+             - "Je suis infirmier spécialiste en gériatrie et je recherche un emploi dans un hôpital." → OUI  
+             - "J'aime la lecture et les voyages." → NON  
 
            Segment : « ${segment} »`
        };
