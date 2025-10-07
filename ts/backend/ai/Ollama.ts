@@ -28,8 +28,9 @@ export enum OUI_ou_NON {
     OUI = "OUI",
     NON = "NON"
 }
-type LLMResponse=string[]|
-    `Nom :${string}` |`Age :${string}` | `Adresse :${string}`;
+type LLMResponse={segment:string[];
+    status:"OUI"| "NON";};
+
 /** Windows */
 // $BODY = @{
 //     model = 'mistral:latest'
@@ -137,19 +138,29 @@ export default class Ollama extends AI {
        const keywords= ["compétence","expérience","compétences","qualification","qualifications","savoir-faire","expertise","aptitude","aptitudes","capacité","capacités","skill","skills","poste","postuler"];
 
        /*let reponseLLM=""
-     */   const message = {
-           role: 'user',
-            content: `Tu es un assistant qui analyse des segments de CV.
-            Ton objectif : décider si un segment fait référence à une compétence professionnelle.
-            Fais particulièrement attention aux éléments suivants : poste occupé, responsabilités, expérience, gestion de projet, tâches, leadership, compétences techniques ou relationnelles.
-            Régles spéciales:
-            -Si le texte contient  une identité(exemple: "Je m'appelle Jean Dupont"), réponds Nom :suivi de nom détecté.
-            -Si le texte mentionne  une salutation(exemple: "Bonjour, je m'appelle Jean Dupont"), réponds Non .
-            -Si le texte  montionne  l'age (exemple:"J'ai 30 ans"),reponds Age :suivi de l'age détecté.
-            -Si le texte  montionne  une adresse (exemple:"J'habite à Paris"),réponds Adresse :suivi de l'adresse détectée.
-            -sinon Ne réponds pas avec OUI ou NON. Liste uniquement les competences séparées par des virgules si plusieurs.
-          
-            Segment : « ${segment} »`
+     */const message = {
+            role: 'user',
+            content: `
+            Tu es un assistant qui analyse des segments de CV.
+            Ton objectif est  déterminer si un segment contient des informations professionnelles pertinentes comme:
+               -des compétences (techniques, linguistiques, informatiques, relationnelles),
+               - des savoir-faire ou hard skills,
+                - des mentions de poste, de métier ou de candidature (par exemple : "je postule pour...", "je souhaite occuper le poste de...", etc.),
+               - des formations, diplômes ou certifications.
+           Règles strictes :
+           1. Si le segment contient :
+              - une compétence technique , un savoir-faire, un hard skill,
+              - la personne parle d'un poste ou d'un emploi,
+              - une formation ou un diplôme
+           renvoie uniquement OUI
+           2. Sinon , renvoie  uniquement NON
+           3. Ne renvoie rien d’autre que OUI ou NON
+           4. Chaque segment est traité individuellement.
+           Exemples:
+              -"Je suis maistrise en Java et Python." -> OUI
+              - J'aimerais postuler pour le poste de commercial => OUI
+
+           Segment : « ${segment} »`
        };
    /*    const response=await ollama.complete({model,message:[message],max_tokens:50});
        r
@@ -158,19 +169,32 @@ export default class Ollama extends AI {
         return new Promise(async (resolve) => {
             // Enable or disable thinking: https://ollama.com/blog/thinking
             const response = await ollama.chat({model: `${model}`, messages: [message], think: false, stream: false});
-            const reponseLLM=response.message.content;
-                if(reponseLLM.toUpperCase().startsWith("NOM")||reponseLLM.toUpperCase().startsWith("AGE")||reponseLLM.toUpperCase().startsWith("ADRESSE")){
+          console.log("reponse de ollama",response);
+
+            let reponseLLM=(response.message.content||"").trim();
+            reponseLLM=reponseLLM.replace(/[.?!]$/,"");
+            if (reponseLLM==="OUI") {
+                resolve(segment );
+                console.log("segment ",segment);
+                return;
+            }else {
+               resolve("NON" as LLMResponse);
+                    return;
+
+
+            }
+            /*if(reponseLLM.toUpperCase().startsWith("NOM")||reponseLLM.toUpperCase().startsWith("AGE")||reponseLLM.toUpperCase().startsWith("ADRESSE")){
                  resolve(reponseLLM as LLMResponse)
                     return;
                 }
-                /*
+              */  /*
             const oui = reponseLLM.toUpperCase().split(OUI_ou_NON.OUI).length - 1;
             const non =reponseLLM.toUpperCase().split(OUI_ou_NON.NON).length - 1;
             */
-            const competences = reponseLLM.split(',').map(comp => comp.trim()).filter(comp => comp.length > 0);
-          console.log("competences envoyeé depuis ollama");
-           console.log(competences);
-            resolve(competences);
+            //const competences = reponseLLM.split(',').map(comp => comp.trim()).filter(comp => comp.length > 0);
+          //console.log("competences envoyeé depuis ollama");
+           //console.log(competences);
+            //resolve(competences);
         });
         // const response_ = await ollama.chat({model: `${model}`, messages: [message], stream: true});
         // for await (const token of response_)  // => 'stream: true'
