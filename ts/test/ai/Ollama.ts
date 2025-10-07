@@ -55,7 +55,8 @@ const sentences = Settings.Soudure
 }
 testMarketingDigital()
 */
-const cv_text =" Je viens  d'obtenir un master en informatique ";
+const cv_text = "J'aimerais postuler pour le poste de commercial pour le groupe ABC.\
+Je viens d'obtenir un master en économie et gestion avec une spécialisation en marketing.";
 const segments = Segment_CV_string(cv_text);
 console.log(segments);
 function isPersonalInfo(segment: string): string {
@@ -97,16 +98,18 @@ async function testOllama() {
         const segLower = seg.toLowerCase();
         const oui_ou_non = await Ollama.Elect_as_professional_competency(seg);
       //  console.info(`\x1b[32m\t✅ ${oui_ou_non} -> "${seg}"\x1b[0m`);
-        console.log(`${oui_ou_non}-> "${seg}"`);
-
-            segmentsAvecCompetences.push(seg.trim());
-
+         console.log("compétnces",oui_ou_non);
+        if(oui_ou_non !== "NON") {
+            console.log(`${oui_ou_non}-> "${seg}"`);
+            segmentsAvecCompetences.push(seg);
+        }
     }
     console.log(`\nSegments identifiés comme compétences professionnelles:`);
     console.log(segmentsAvecCompetences);
     for(const seg of segmentsAvecCompetences){
     if(segmentsAvecCompetences.length>0){
         const competencies = ROMEO_V2.Predict_competencies(ROME0_V2_call_back.bind(Settings.FINGERPRINT), [seg]);
+       console.log("compétence envoyée à ROMEO ver. 2 :",seg);
         competencies.then((competencies) => {
             if (competencies === null)
                 console.log(`\x1b[31m\t\t❌ Si 'null' alors problème avec 'token'\x1b[0m`);
