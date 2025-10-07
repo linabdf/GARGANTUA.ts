@@ -2,6 +2,7 @@ import Settings, {SSE_message_type} from "../../common/Settings";
 import Ollama, {OUI_ou_NON} from "../../backend/ai/Ollama";
 import {Segment_CV_string} from '../../backend/Server_settings'
 import ROMEO_V2, {GARGANTUA_competency_datum} from "../../backend/francetravail.io/ROMEO_V2";
+import ollama from "ollama";
 // L'API ROMEO ver. 2 retourne '✅ Compétence : "Barman" 0.745' et '✅ Compétence : "BP barman" 0.724' sur la base de la phrase 'Geriatrie_1'.
 // L'idée est de ne pas envoyer cette phrase à l'API grâce au LLM qui va nous dire que la phrase
 // ne fait *AUCUNEMENT* référence à des compétences professionnelles...
@@ -55,26 +56,25 @@ const sentences = Settings.Soudure
 }
 testMarketingDigital()
 */
-const cv_text = "Voyons ici un exemple d'une vidéo de candidat effective.\
-Rappelez-vous que cette vidéo n'est pas parfaite et vous devrez adapter votre vidéo à l'employeur,\
- l'entreprise et l'industrie dans laquelle vous postulez.\
-Bonjour, je m'appelle Astrid et j'aimerais postuler pour le poste de commercial pour le groupe ABC.\
-Je viens d'obtenir un m en économie et gestion avec une spécialisation en marketing.\
-Ma première expérience professionnelle a eu lieu dans le domaine bancaire\
- où j'ai participé à l'élaboration et la mise en place d'une nouvelle stratégie\
- pour améliorer la qualité de suivi des meilleurs clients.\
-Ce qui m'interpelle le plus dans le poste que vous proposez\
- est qu'il me permettrait de mettre à profit mes compétences et mon expérience\
- dans un domaine qui me plaît et dans lequel je me projette sur le long terme.\
-De plus, la qualité de l'écoute client et la détermination du groupe ABC\
- à privilégier l'évolution de ses collaborateurs me séduit tout particulièrement.\
-Mon expérience unique dans le domaine bancaire, mon orientation client\
- et ma parfaite maîtrise Excel font de moi une candidate idéale\
- pour le poste que vous proposez.\
-Pour finir, j'aimerais mettre mon enthousiasme, mon énergie\
- et mon goût pour réussir de nouveaux challenges au profit d'un travail d'équipe.\
-Je vous remercie de l'attention que vous porterez à ma candidature\
- et espère vous rencontrer bientôt.";
+const cv_text = "Bonjour, moi c'est Benjamin, j'ai 22 ans et j'habite à Rennes.\
+Dans la vie, ce que j'aime, c'est la photo, l'aventure et le voyage.\
+Je suis aussi un grand passionné de football et je pratique la course à pied régulièrement.\
+Après mon bac, j'ai fait un BTS MUC, puis une licence responsable de centre de profit en alternance à NatureSource,\
+ où j'ai pu développer mes compétences en gestion et management.\
+Ensuite, j'ai été embauché en CDI dans cette même entreprise, où j'ai également fait de la communication,\
+ et c'est vraiment ce qui m'intéressait le plus.\
+ Suite à cette expérience, j'ai repris mes études et fait un bachelor marketing digital et communication,\
+ où j'ai effectué un stage de 6 mois au sein d'une entreprise dans le domaine de l'événementiel.\
+Lors de ce stage, j'ai créé un nouveau site internet sous WordPress, développé les réseaux sociaux,\
+ créé de nouveaux supports de communication, mais également réalisé des études de marché.\
+Je maîtrise également la mise en page avec InDesign, les retouches avec Photoshop,\
+ ainsi que la création de montages vidéo avec Adobe Premiere.\
+En septembre prochain, je débute un master dans le marketing et la communication\
+ et recherche une entreprise qui pourra m'accueillir en contrat de professionnalisation.\
+Sérieux, dynamique, curieux, créatif et surtout très motivé, j'ai envie d'apprendre encore et encore,\
+ mais surtout appliquer mes connaissances sur le terrain et contribuer au développement de votre entreprise.\
+Mon profil vous intéresse ? Contactez-moi !";
+
 const segments = Segment_CV_string(cv_text);
 console.log(segments);
 function isPersonalInfo(segment: string): string {
@@ -116,7 +116,7 @@ async function testOllama() {
         const segLower = seg.toLowerCase();
         const oui_ou_non = await Ollama.Elect_as_professional_competency(seg);
       //  console.info(`\x1b[32m\t✅ ${oui_ou_non} -> "${seg}"\x1b[0m`);
-         console.log("compétnces",oui_ou_non);
+         console.log("compétences",oui_ou_non);
         if(oui_ou_non !== "NON") {
             console.log(`${oui_ou_non}-> "${seg}"`);
             segmentsAvecCompetences.push(seg);
@@ -133,13 +133,24 @@ async function testOllama() {
                 console.log(`\x1b[31m\t\t❌ Si 'null' alors problème avec 'token'\x1b[0m`);
         });
         await sleep(500);
-    }}
+    }
+    }
     return segmentsAvecCompetences;
 }
 testOllama();
-
-
-
+/*(async () => {
+    const tousSousSegments: string[][] = [];
+    for (const segment of segments) {
+const sousSegments = await Ollama.decouperSegmentAvecOllama(segment);
+console.log("Sous-segments détectés :", sousSegments);
+        tousSousSegments.push(sousSegments);
+    }
+    // Affichage complet
+    console.log("Sous-segments détectés pour chaque segment :");
+    tousSousSegments.forEach((ss, index) => {
+        console.log(`Segment ${index + 1}:`, ss);
+    });
+})();
 /*async function predictmet(){
     const cv_text = "Bonjour, je m'appelle Astrid et j'aimerais postuler pour le poste de commercial.";
     let result;
@@ -156,5 +167,5 @@ predictmet();
 
     const result=await Ollama.Predict(fingerprint,segments,model,format);
     console.log(`\n Résultat complet de Predict :\n`,result);
-    }
+    }/
 testPredict();*/

@@ -203,4 +203,49 @@ export default class Ollama extends AI {
         // for await (const token of response_)  // => 'stream: true'
         //     process.stdout.write(token.message.content); // Réponse standard de l'IA...
     }
+    static async decouperSegmentAvecOllama(
+        segment: string,
+        model = Ollama._LLM
+    ): Promise<string[]> {
+        const message = {
+            role: "user",
+            content: `
+Tu es un assistant spécialisé dans l'analyse de CV.
+Ton objectif : analyser le segment ci-dessous et le découper en plusieurs sous-segments
+s'il contient plusieurs compétences, métiers ou idées professionnelles.
+
+- Chaque sous-segment doit contenir une seule compétence, métier .
+- Si le segment ne contient qu'une seule idée, ne le découpe pas.
+- Renvoie uniquement la liste des sous-segments, un par ligne, sans autre texte.
+
+Segment à analyser :
+« ${segment} »
+`
+        };
+
+        try {
+            const response = await ollama.chat({
+                model,
+                messages: [message],
+                stream: false,
+                think: false
+            });
+
+            const texte = (response.message?.content || "").trim();
+
+            // Découper la réponse par lignes et nettoyer les espaces
+            const sousSegments = texte
+                .split(/\r?\n/)
+                .map(s => s.trim())
+                .filter(s => s.length > 0);
+
+            return sousSegments;
+        } catch (error) {
+            console.error("Erreur lors de l'appel à Ollama :", error);
+            // En cas d'erreur, on renvoie le segment original dans un tableau
+            return [segment];
+        }
+    }
+
+
 }
