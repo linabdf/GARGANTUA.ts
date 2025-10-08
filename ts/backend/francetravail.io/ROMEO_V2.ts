@@ -63,8 +63,8 @@ export default class ROMEO_V2 {
 
     private static readonly _API_BASE_URL = "https://api.francetravail.io/partenaire/romeo/v2";
     private static readonly _TOKEN_URL = "https://entreprise.francetravail.fr/connexion/oauth2/access_token?realm=%2Fpartenaire";
-    //seuil  minimal pour accepter une compétence  ou  un métier
-    private static readonly _Prediction_threshold_score = 0.85;
+    //seuil  minimal pour accepter une compétence  ou  un métier ca il faut le voir tres bien
+    private static readonly _Prediction_threshold_score = 0.65;
     // nombre  des résultats a retourner par défaut
     private static readonly _Result_number = 2;
     private static readonly _Scope = "api_romeov2";
