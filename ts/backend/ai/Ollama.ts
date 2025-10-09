@@ -69,7 +69,7 @@ export default class Ollama extends AI {
                 Ollama._Available_LLMs =  data.models.map((model :any)=> model.name).join(" - ");
               //verifier si  le qwen3 est bien installé
                 if (Trace) {
-                    console.log(`\x1b[32m\t✅ Réponse 'Ollama' :\x1b[0m`, Ollama._Available_LLMs);
+                //    console.log(`\x1b[32m\t✅ Réponse 'Ollama' :\x1b[0m`, Ollama._Available_LLMs);
                     console.assert(Ollama._Available_LLMs.includes(Ollama._LLM), "'Ollama._Available_LLMs.includes(Ollama._LLM)' untrue");
                 }
             }).catch(error => {
@@ -172,16 +172,22 @@ export default class Ollama extends AI {
         return new Promise(async (resolve) => {
             // Enable or disable thinking: https://ollama.com/blog/thinking
             const response = await ollama.chat({model: `${model}`, messages: [message], think: false, stream: false});
-          console.log("reponse de ollama",response);
+          //console.log("reponse de ollama",response);
 
             let reponseLLM=(response.message.content||"").trim();
             reponseLLM=reponseLLM.replace(/[.?!]$/,"");
-            if (reponseLLM==="OUI") {
+            const result={
+                segment:segment,
+                response: reponseLLM==="OUI"? "OUI":"NON"
+            }
+            if (result.response==="OUI") {
                 resolve(segment );
-                console.log("segment ",segment);
+                console.log("\x1b[32m%s\x1b[0m", `segment : ${segment}`);
+
                 return;
             }else {
-               resolve("NON" as LLMResponse);
+                console.log("\x1b[31m%s\x1b[0m", `❌ Segment rejeté: ${segment}`);
+                resolve("NON" as LLMResponse);
                     return;
 
 
