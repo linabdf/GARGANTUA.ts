@@ -147,21 +147,26 @@ export default class Ollama extends AI {
                - un savoir-faire ou hard skills
                - une  mention explicite d'emploi, de poste, de métier ou de candidature (par exemple : "je postule pour...", "je souhaite occuper le poste de...","je suis développeur" etc.)
                - une formation,  un diplômes ou une certification
+               -  une **expérience professionnelle** (même si elle est courte ou dans un domaine différent)
+           
            Règles strictes :
            1. Si le segment contient :
               - une compétence technique , un savoir-faire, un hard skill
               - la personne parle d'un poste ou d'un emploi par exemple : "j'aimerais postuler pour", "je souhaite occuper le poste de...", "je suis développeur ..."
               - une formation ou un diplôme
+              - une expérience professionnelle
            renvoie uniquement OUI
            2. Sinon , renvoie  uniquement NON
            3. Ne renvoie rien d’autre que OUI ou NON
            4. Chaque segment est traité individuellement.
+           
            Exemples:
              -"Je maîtrise Java et Python." → OUI  
              - "Je viens d'obtenir un master en économie et gestion." → OUI  
              - "J'aimerais postuler pour le poste de commercial." → OUI  
              - "Je suis infirmier spécialiste en gériatrie et je recherche un emploi dans un hôpital." → OUI  
              - "J'aime la lecture et les voyages." → NON  
+             -Pendant mon stage, j'ai appris à travailler en équipe." → OUI
 
            Segment : « ${segment} »`
        };

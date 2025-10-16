@@ -5,6 +5,7 @@ import compromise from 'compromise';
 import dotenv from 'dotenv'; // Utile uniquement pour Node.js 18 car option '--env-file=.env' absente...
 import nexline from 'nexline';
 import nlp from 'compromise'
+import * as fs from 'fs/promises';
 import {regex} from "zod/v4";
 
 
@@ -23,23 +24,20 @@ class Server_settings {
         dotenv.config(); // Utile uniquement pour Node.js 18 car option '--env-file=.env' absente...
     }
 }
-//fonction qui fait le decoupage
-export async function Segment_CV_text(text_file_path: string): never | Promise<Array<string>> {
-    const segments = new Array;
-    // Exception à gérer : lire le txte ligne par ligne
-    const text = nexline({ // 'nexline' library...
-        input: file_system.createReadStream(text_file_path)
-    });
-    while (true) {
-        const segment = await text.next();
-        if (segment === null) break; // End of text is reached...
-        if (segment.length === 0) continue; // Ignore empty line...
-        // https://observablehq.com/@spencermountain/compromise-selections
-        segments.push(...compromise(segment.trim()).sentences().out('array'));
+import * as fs from 'fs/promises';
+export async function Segment_CV_text(text_file_path:string):Promise<Array<string>>{
+    if(!text_file_path||text_file_path.trim().length===0){
+        return [];
     }
-    // if (Trace)
-    //     console.log(`\x1b[33m\t\t>> ${segments.join(" *** ")}\x1b[0m`);
-    return segments;
+    const textChaine=await fs.readFile(text_file_path,{encoding:'utf8'});
+    //supprimer les barres ,remplacer les sauts de ligne par un espace
+    let textPropre=textChaine.replace(/[|\\/]/g,' ').replace(/(\r\n|\n|\r)/gm, ' ').replace(/\s+/g,' ').trim();
+  //enlever les Guillemets et Point-virgule
+    textPropre=textPropre.replace(/^"|"$/g,'').trim();
+    textPropre=textPropre.replace(/;$/,'').trim();
+
+    const segmented=Segment_CV_string(textPropre);
+    return segmented;
 }
 
 export function Segment_CV_string(text: string): Array<string> {
