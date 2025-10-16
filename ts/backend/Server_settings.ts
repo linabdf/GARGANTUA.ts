@@ -23,7 +23,7 @@ class Server_settings {
         dotenv.config(); // Utile uniquement pour Node.js 18 car option '--env-file=.env' absente...
     }
 }
-/*//fonction qui fait le decoupage
+//fonction qui fait le decoupage
 export async function Segment_CV_text(text_file_path: string): never | Promise<Array<string>> {
     const segments = new Array;
     // Exception à gérer : lire le txte ligne par ligne
@@ -40,7 +40,7 @@ export async function Segment_CV_text(text_file_path: string): never | Promise<A
     // if (Trace)
     //     console.log(`\x1b[33m\t\t>> ${segments.join(" *** ")}\x1b[0m`);
     return segments;
-}*/
+}
 
 export function Segment_CV_string(text: string): Array<string> {
    if (!text || text.trim().length === 0) return [];
