@@ -25,21 +25,24 @@ class Server_settings {
     }
 }
 import * as fs from 'fs/promises';
-export async function Segment_CV_text(text_file_path:string):Promise<Array<string>>{
-    if(!text_file_path||text_file_path.trim().length===0){
-        return [];
+
+export async function Segment_CV_text(text_file_path: string): never | Promise<Array<string>> {
+    const segments = new Array;
+    // Exception à gérer :
+    const text = nexline({ // 'nexline' library...
+        input: file_system.createReadStream(text_file_path)
+    });
+    while (true) {
+        const segment = await text.next();
+        if (segment === null) break; // End of text is reached...
+        if (segment.length === 0) continue; // Ignore empty line...
+        // https://observablehq.com/@spencermountain/compromise-selections
+        segments.push(...compromise(segment.trim()).clauses().out('array'));
     }
-    const textChaine=await fs.readFile(text_file_path,{encoding:'utf8'});
-    //supprimer les barres ,remplacer les sauts de ligne par un espace
-    let textPropre=textChaine.replace(/[|\\/]/g,' ').replace(/(\r\n|\n|\r)/gm, ' ').replace(/\s+/g,' ').trim();
-  //enlever les Guillemets et Point-virgule
-    textPropre=textPropre.replace(/^"|"$/g,'').trim();
-    textPropre=textPropre.replace(/;$/,'').trim();
-
-    const segmented=Segment_CV_string(textPropre);
-    return segmented;
+    // if (Trace)
+    //     console.log(`\x1b[33m\t\t>> ${segments.join(" *** ")}\x1b[0m`);
+    return segments;
 }
-
 export function Segment_CV_string(text: string): Array<string> {
    if (!text || text.trim().length === 0) return [];
         // Normaliser : ajouter un espace après les points si oublié

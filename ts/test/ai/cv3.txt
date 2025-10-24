@@ -1,0 +1,3 @@
+"Bonjour, je m'appelle Henri, je suis à la recherche d'un emploi dans le domaine de la soudure \
+et j'ai des compétences en soudage à l'arc électrique et en soudage au laser.\
+J'opère principalement dans les environs de Dax, Tarbes et Lourdes.";

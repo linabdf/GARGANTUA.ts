@@ -94,7 +94,7 @@ Je vous remercie de l'attention que vous porterez à ma candidature\
     static readonly Banque_commercial_suivi_client_mp3 = "./audio/Banque_commercial_suivi_client.mp3";
     static readonly Banque_commercial_suivi_client_mp4 = "./video/Banque_commercial_suivi_client.mp4";
 
-    static readonly Marketing_digital = "Bonjour, moi c'est Benjamin, j'ai 22 ans et j'habite à Rennes.\
+    static readonly Marketing_digital ="Bonjour, moi c'est Benjamin, j'ai 22 ans et j'habite à Rennes.\
 Dans la vie, ce que j'aime, c'est la photo, l'aventure et le voyage.\
 Je suis aussi un grand passionné de football et je pratique la course à pied régulièrement.\
 Après mon bac, j'ai fait un BTS MUC, puis une licence responsable de centre de profit en alternance à NatureSource,\
@@ -103,19 +103,19 @@ Ensuite, j'ai été embauché en CDI dans cette même entreprise, où j'ai égal
  et c'est vraiment ce qui m'intéressait le plus.\
  Suite à cette expérience, j'ai repris mes études et fait un bachelor marketing digital et communication,\
  où j'ai effectué un stage de 6 mois au sein d'une entreprise dans le domaine de l'événementiel.\
-Lors de ce stage, j'ai créé un nouveau site internet sous WordPress, développé les réseaux sociaux,\
- créé de nouveaux supports de communication, mais également réalisé des études de marché.\
+Lors de ce stage, j'ai crée un nouveau site internet sous WordPress, développé les réseaux sociaux,\
+ crée de nouveaux supports de communication, mais également réalisé des études de marché.\
 Je maîtrise également la mise en page avec InDesign, les retouches avec Photoshop,\
  ainsi que la création de montages vidéo avec Adobe Premiere.\
 En septembre prochain, je débute un master dans le marketing et la communication\
  et recherche une entreprise qui pourra m'accueillir en contrat de professionnalisation.\
 Sérieux, dynamique, curieux, créatif et surtout très motivé, j'ai envie d'apprendre encore et encore,\
  mais surtout appliquer mes connaissances sur le terrain et contribuer au développement de votre entreprise.\
-Mon profil vous intéresse ? Contactez-moi !";
+Mon profil vous intéresse ? Contactez-moi !"
 
     static readonly Soudure = "Bonjour, je m'appelle Henri, je suis à la recherche d'un emploi dans le domaine de la soudure et j'ai des compétences en soudage à l'arc électrique et en soudage au laser.\
 J'opère principalement dans les environs de Dax, Tarbes et Lourdes.";
-  static readonly  Geriatrie="Bonjour, je m'appelle Franck Barbier. Mon numéro de téléphone est 0608272562.Mon adresse mail est franck.barbier.com. Je suis infirmier spécialiste en gériatrie et je recherche un emploi dans un hôpital ou une clinique autour de Mont-de-Marsan dans les Landes."
+  static readonly  Geriatrie="Bonjour, je m'appelle Franck Barbier. Mon numéro de téléphone est 0608272562.Mon adresse mail est franck.barbier.com. Je suis infirmier spécialiste en gériatrie et je recherche un emploi dans un hôpital ou une clinique autour de Mont-de-Marsan dans les Landes.";
 
     static readonly Soudure_mp4 = "./video/Soudure.mp4";
     static readonly Soudure_wav = "./audio/Soudure.wav";
